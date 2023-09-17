@@ -1,105 +1,106 @@
 <template>
-  <v-container>
-    <v-app-bar app color="primary">
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title style="font-size: 20px; color: white;">Cocktails</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn text to="/" style="color: white; font-size: 16px;">
-        <v-icon left>mdi-home</v-icon>
-        Početna
-      </v-btn>
-      <div style="width: 1px; background-color: white; height: 24px; margin: 0 12px;"></div>
-      <v-btn text to="/about" style="color: white; font-size: 16px;">
-        <v-icon left>mdi-information</v-icon>
-        O nama
-      </v-btn>
-      <div style="width: 1px; background-color: white; height: 24px; margin: 0 12px;"></div>
-      <v-btn text @click="showAddModal = true" style="color: white; font-size: 16px;">
-        <v-icon left>mdi-plus</v-icon>
-        Dodaj koktel
-      </v-btn>
-    </v-app-bar>
+  <v-main class="custom-background">
+    <v-container>
+      <v-app-bar app color="primary">
+        <v-toolbar-title style="font-size: 30px; color: white;" class="appname"> Cocktails <v-icon right style="color: white;">mdi-glass-cocktail</v-icon></v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn text to="/" style="color: white; font-size: 16px;">
+          <v-icon left>mdi-home</v-icon>
+          Početna
+        </v-btn>
+        <div style="width: 1px; background-color: white; height: 24px; margin: 0 12px;"></div>
+        <v-btn text to="/about" style="color: white; font-size: 16px;">
+          <v-icon left>mdi-information</v-icon>
+          O nama
+        </v-btn>
+        <div style="width: 1px; background-color: white; height: 24px; margin: 0 12px;"></div>
+        <v-btn text @click="showAddModal = true" style="color: white; font-size: 16px;">
+          <v-icon left>mdi-plus</v-icon>
+          Dodaj koktel
+        </v-btn>
+      </v-app-bar>
 
-    <v-text-field v-model="searchTerm" label="Pretraga koktela" @input="performSearch" />
+      <v-text-field v-model="searchTerm" label="Pretraga koktela" @input="performSearch" />
 
-    <v-select
-      v-model="selectedDifficulty"
-      :items="difficultyOptions"
-      label="Odaberi težinu"
-      @change="filterByDifficulty"
-    ></v-select>
-    <h5 class="cocktail-title">{{ selectedDifficulty }}</h5>
+      <v-select
+        v-model="selectedDifficulty"
+        :items="difficultyOptions"
+        label="Odaberi težinu"
+        @change="filterByDifficulty"
+      ></v-select>
+      <h5 class="cocktail-title">{{ selectedDifficulty }}</h5>
 
-    <!-- Prikaz svih koktela -->
-    <v-row>
-      <v-col
-        v-for="cocktail in paginatedCocktails"
-        :key="cocktail.title"
-        cols="12"
-        md="4"
+      <!-- Prikaz svih koktela -->
+      <v-row>
+        <v-col
+          v-for="cocktail in paginatedCocktails"
+          :key="cocktail.title"
+          cols="12"
+          md="4"
+        >
+          <Cocktail
+            :cocktail="cocktail"
+            @editCocktail="editCocktail"
+          />
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="12" class="text-center">
+          <v-pagination
+            v-model="currentPage"
+            :length="totalPages"
+            @input="paginate"
+            color="indigo accent-4"
+          ></v-pagination>
+        </v-col>
+      </v-row>
+
+      <!-- Modal za uređivanje koktela -->
+      <v-dialog v-model="showEditModal" max-width="600px">
+        <template v-if="showEditModal">
+          <div class="modal-dialog" style="background-color: white; border-radius: 5px;">
+            <div class="modal-content">
+              <h2>Uredi koktel</h2>
+              <v-text-field v-model="editFormData.name" label="Ime koktela"></v-text-field>
+              <v-select v-model="editFormData.difficulty" label="Težina" :items="difficultyOptions"></v-select>
+              <v-btn color="primary" @click="saveCocktail">Spremi koktel</v-btn>
+              <v-btn color="white" @click="showEditModal = false">Zatvori</v-btn>
+            </div>
+          </div>
+        </template>
+      </v-dialog>
+
+      <!-- Modal za dodavanje koktela -->
+      <v-dialog v-model="showAddModal" max-width="600px">
+        <template v-if="showAddModal">
+          <div class="modal-dialog" style="background-color: white; border-radius: 5px;">
+            <div class="modal-content">
+              <h2>Dodaj novi koktel</h2>
+              <v-text-field v-model="addFormData.name" label="Ime koktela"></v-text-field>
+              <v-text-field v-model="addFormData.image" label="URL slike koktela"></v-text-field>
+              <v-select v-model="addFormData.difficulty" label="Težina" :items="difficultyOptions"></v-select>
+              <v-btn color="primary" @click="addCocktail">Dodaj koktel</v-btn>
+              <v-btn color="white" @click="showAddModal = false">Zatvori</v-btn>
+            </div>
+          </div>
+        </template>
+      </v-dialog>
+
+      <!-- Snackbar za prikazivanje obavijesti -->
+      <v-snackbar
+        v-model="snackbar"
+        :color="snackbarColor"
+        :timeout="snackbarTimeout"
       >
-        <Cocktail
-          :cocktail="cocktail"
-          @editCocktail="editCocktail"
-        />
-      </v-col>
-    </v-row>
-
-    <v-row>
-      <v-col cols="12" class="text-center">
-        <v-pagination
-          v-model="currentPage"
-          :length="totalPages"
-          @input="paginate"
-          color="indigo accent-4"
-        ></v-pagination>
-      </v-col>
-    </v-row>
-
-    <!-- Modal za uređivanje koktela -->
-    <v-dialog v-model="showEditModal" max-width="600px">
-      <template v-if="showEditModal">
-        <div class="modal-dialog" style="background-color: white; border-radius: 5px;">
-          <div class="modal-content">
-            <h2>Uredi koktel</h2>
-            <v-text-field v-model="editFormData.name" label="Ime koktela"></v-text-field>
-            <v-select v-model="editFormData.difficulty" label="Težina" :items="difficultyOptions"></v-select>
-            <v-btn color="primary" @click="saveCocktail">Spremi koktel</v-btn>
-            <v-btn color="white" @click="showEditModal = false">Zatvori</v-btn>
-          </div>
+        <div class="snackbar-content">
+          {{ snackbarMessage }}
         </div>
-      </template>
-    </v-dialog>
+        
+      </v-snackbar>
 
-    <!-- Modal za dodavanje koktela -->
-    <v-dialog v-model="showAddModal" max-width="600px">
-      <template v-if="showAddModal">
-        <div class="modal-dialog" style="background-color: white; border-radius: 5px;">
-          <div class="modal-content">
-            <h2>Dodaj novi koktel</h2>
-            <v-text-field v-model="addFormData.name" label="Ime koktela"></v-text-field>
-            <v-text-field v-model="addFormData.image" label="URL slike koktela"></v-text-field>
-            <v-select v-model="addFormData.difficulty" label="Težina" :items="difficultyOptions"></v-select>
-            <v-btn color="primary" @click="addCocktail">Dodaj koktel</v-btn>
-            <v-btn color="white" @click="showAddModal = false">Zatvori</v-btn>
-          </div>
-        </div>
-      </template>
-    </v-dialog>
-
-    <!-- Snackbar za prikazivanje obavijesti -->
-    <v-snackbar
-      v-model="snackbar"
-      :color="snackbarColor"
-      :timeout="snackbarTimeout"
-    >
-      <div class="snackbar-content">
-        {{ snackbarMessage }}
-      </div>
-      
-    </v-snackbar>
-
-  </v-container>
+    </v-container>
+  </v-main>
 </template>
 
 <script>
@@ -171,7 +172,7 @@ export default {
       axios
         .get(api, {
           headers: {
-            'X-RapidAPI-Key': 'e5640e3126msh0c8414d1e174cd2p1992c5jsn2acd70db351d',
+            'X-RapidAPI-Key': '947a295322msh46a00f893f6500cp1bea25jsncb23b7e5061b',
             'X-RapidAPI-Host': 'the-cocktail-db3.p.rapidapi.com'
           }
         })
@@ -204,7 +205,7 @@ export default {
       if (this.editingCocktail) {
         this.editingCocktail.title = this.editFormData.name;
         this.editingCocktail.difficulty = this.editFormData.difficulty;
-        this.showSnackbar('Koktel je uspješno uređen.', 'success', 5000); // Prikaži snackbar s porukom
+        this.showSnackbar('Koktel je uspješno uređen.', 'success', 3000); // Prikaži snackbar s porukom
       } else {
         this.cocktails.push({
           title: this.editFormData.name,
@@ -247,11 +248,29 @@ export default {
 </script>
 
 <style scoped>
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+.appname{
+  font-family: 'Roboto', sans-serif;
+}
+
+.custom-background {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+         180deg,
+         rgba(142, 182, 255, 0.3) 0%,
+         rgba(211, 232, 251, 0.3) 100%
+      );
+      padding: 20px 0 0 0 !important;
+   }
+
 .snackbar-content {
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 8px; /* Dodavanje željenog razmaka oko teksta */
+  padding: 5px; /* Dodavanje željenog razmaka oko teksta */
 }
 </style>
