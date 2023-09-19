@@ -33,37 +33,37 @@
         <div class="technologies">
           <div class="technology">
             <a href="https://vuejs.org/" target="_blank">
-              <img src="/vuejs.png" alt="Vue.js" class="tech-image" />
+              <img src="/vuejs.jpeg" alt="Vue.js" class="tech-image" />
             </a>
             <p>Vue.js</p>
           </div>
           <div class="technology">
             <a href="https://vuetifyjs.com/en/" target="_blank">
-              <img src="/vuetify.png" alt="Vuetify" class="tech-image" />
+              <img src="/vuetify.jpeg" alt="Vuetify" class="tech-image" />
             </a>
             <p>Vuetify</p>
           </div>
           <div class="technology">
             <a href="https://axios-http.com/" target="_blank">
-              <img src="/axios.png" alt="Axios" class="tech-image" />
+              <img src="/axios.jpeg" alt="Axios" class="tech-image" />
             </a>
             <p>Axios</p>
           </div>
           <div class="technology">
             <a href="https://developer.mozilla.org/en-US/docs/Web/HTML" target="_blank">
-              <img src="/html.png" alt="HTML" class="tech-image" />
+              <img src="/html.jpeg" alt="HTML" class="tech-image" />
             </a>
             <p>HTML</p>
           </div>
           <div class="technology">
             <a href="https://developer.mozilla.org/en-US/docs/Web/CSS" target="_blank">
-              <img src="/css.png" alt="CSS" class="tech-image" />
+              <img src="/css.jpeg" alt="CSS" class="tech-image" />
             </a>
             <p>CSS</p>
           </div>
           <div class="technology">
             <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-              <img src="/javascript.png" alt="JavaScript" class="tech-image" />
+              <img src="/javascript.jpeg" alt="JavaScript" class="tech-image" />
             </a>
             <p>JavaScript</p>
           </div>

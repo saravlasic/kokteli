@@ -172,7 +172,7 @@ export default {
       axios
         .get(api, {
           headers: {
-            'X-RapidAPI-Key': '947a295322msh46a00f893f6500cp1bea25jsncb23b7e5061b',
+            'X-RapidAPI-Key': '81eb93cbf8msh209db055c22bd68p134439jsn3c9aa1b82013',
             'X-RapidAPI-Host': 'the-cocktail-db3.p.rapidapi.com'
           }
         })
